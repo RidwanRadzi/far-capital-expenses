@@ -1,0 +1,424 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-sans); background: transparent; color: var(--color-text-primary); }
+
+.app { display: flex; flex-direction: column; gap: 0; min-height: 600px; }
+
+.topbar { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 0.5px solid var(--color-border-tertiary); }
+.topbar-left { display: flex; align-items: center; gap: 10px; }
+.logo-badge { background: #0F6E56; color: #E1F5EE; font-size: 11px; font-weight: 500; padding: 4px 10px; border-radius: var(--border-radius-md); letter-spacing: 0.5px; }
+.topbar h1 { font-size: 15px; font-weight: 500; }
+.topbar-right { display: flex; gap: 8px; }
+
+select { font-size: 13px; padding: 6px 10px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-secondary); background: var(--color-background-primary); color: var(--color-text-primary); cursor: pointer; }
+
+.tabs { display: flex; gap: 0; border-bottom: 0.5px solid var(--color-border-tertiary); padding: 0 20px; }
+.tab { padding: 10px 16px; font-size: 13px; cursor: pointer; color: var(--color-text-secondary); border-bottom: 2px solid transparent; margin-bottom: -0.5px; }
+.tab.active { color: #0F6E56; border-bottom-color: #0F6E56; font-weight: 500; }
+
+.content { padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+
+.metrics { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 10px; }
+.metric { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 14px 16px; }
+.metric-label { font-size: 11px; color: var(--color-text-secondary); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+.metric-value { font-size: 22px; font-weight: 500; }
+.metric-sub { font-size: 11px; color: var(--color-text-secondary); margin-top: 2px; }
+.metric-value.green { color: #0F6E56; }
+.metric-value.amber { color: #BA7517; }
+
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 16px; }
+.card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+.card-title { font-size: 13px; font-weight: 500; }
+
+.chart-wrap { position: relative; width: 100%; height: 200px; }
+
+.legend { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.legend-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--color-text-secondary); }
+.legend-dot { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
+
+.expenses-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.expenses-table th { text-align: left; font-size: 11px; font-weight: 500; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: 0.5px; padding: 8px 0; border-bottom: 0.5px solid var(--color-border-tertiary); }
+.expenses-table td { padding: 10px 0; border-bottom: 0.5px solid var(--color-border-tertiary); vertical-align: middle; }
+.expenses-table tr:last-child td { border-bottom: none; }
+
+.cat-badge { font-size: 11px; padding: 3px 8px; border-radius: var(--border-radius-md); }
+.badge-marketing { background: #E6F1FB; color: #185FA5; }
+.badge-utilities { background: #EAF3DE; color: #3B6D11; }
+.badge-travel { background: #FAEEDA; color: #854F0B; }
+.badge-professional { background: #EEEDFE; color: #534AB7; }
+.badge-office { background: #FBEAF0; color: #993556; }
+.badge-maintenance { background: #FAECE7; color: #993C1D; }
+
+.upload-zone { border: 1.5px dashed var(--color-border-secondary); border-radius: var(--border-radius-lg); padding: 32px 20px; text-align: center; cursor: pointer; transition: background 0.15s; }
+.upload-zone:hover { background: var(--color-background-secondary); }
+.upload-icon { font-size: 28px; margin-bottom: 10px; }
+.upload-title { font-size: 14px; font-weight: 500; margin-bottom: 4px; }
+.upload-sub { font-size: 12px; color: var(--color-text-secondary); }
+
+.scan-result { display: none; flex-direction: column; gap: 12px; }
+.scan-result.visible { display: flex; }
+
+.field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.field { display: flex; flex-direction: column; gap: 4px; }
+.field label { font-size: 11px; color: var(--color-text-secondary); font-weight: 500; text-transform: uppercase; letter-spacing: 0.4px; }
+.field input, .field select { font-size: 13px; padding: 8px 10px; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); background: var(--color-background-primary); color: var(--color-text-primary); }
+
+.btn-primary { background: #0F6E56; color: #E1F5EE; border: none; padding: 10px 20px; border-radius: var(--border-radius-md); font-size: 13px; font-weight: 500; cursor: pointer; }
+.btn-secondary { background: transparent; border: 0.5px solid var(--color-border-secondary); color: var(--color-text-primary); padding: 10px 20px; border-radius: var(--border-radius-md); font-size: 13px; cursor: pointer; }
+
+.scanning-state { display: none; align-items: center; gap: 10px; padding: 16px; background: var(--color-background-secondary); border-radius: var(--border-radius-md); }
+.scanning-state.visible { display: flex; }
+.spinner { width: 16px; height: 16px; border: 2px solid var(--color-border-tertiary); border-top-color: #0F6E56; border-radius: 50%; animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.success-msg { display: none; padding: 10px 14px; background: #E1F5EE; border-radius: var(--border-radius-md); font-size: 13px; color: #0F6E56; font-weight: 500; }
+.success-msg.visible { display: block; }
+
+.page { display: none; }
+.page.active { display: flex; flex-direction: column; gap: 16px; }
+
+.yearly-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 10px; }
+
+.amount-col { font-weight: 500; }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="topbar-left">
+      <span class="logo-badge">FAR CAPITAL</span>
+      <h1>Expense Tracker</h1>
+    </div>
+    <div class="topbar-right">
+      <select id="monthFilter">
+        <option value="all">All months</option>
+        <option value="1">January</option><option value="2">February</option>
+        <option value="3">March</option><option value="4">April</option>
+        <option value="5">May</option><option value="6">June</option>
+        <option value="7">July</option><option value="8">August</option>
+        <option value="9">September</option><option value="10">October</option>
+        <option value="11">November</option><option value="12">December</option>
+      </select>
+      <select id="yearFilter"><option value="2025">2025</option><option value="2026" selected>2026</option></select>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('dashboard')">Dashboard</div>
+    <div class="tab" onclick="switchTab('scan')">Add Expense</div>
+    <div class="tab" onclick="switchTab('list')">All Records</div>
+  </div>
+
+  <div class="content">
+
+    <!-- DASHBOARD TAB -->
+    <div class="page active" id="tab-dashboard">
+      <div class="metrics" id="metrics-row"></div>
+      <div class="row2">
+        <div class="card">
+          <div class="card-header"><span class="card-title">Monthly breakdown</span></div>
+          <div class="chart-wrap"><canvas id="barChart"></canvas></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">By category</span></div>
+          <div class="chart-wrap"><canvas id="doughnutChart"></canvas></div>
+          <div class="legend" id="doughnut-legend"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCAN TAB -->
+    <div class="page" id="tab-scan">
+      <div class="card">
+        <div class="card-header"><span class="card-title">Upload receipt or invoice</span></div>
+        <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
+          <div class="upload-icon">🧾</div>
+          <div class="upload-title">Click to upload receipt or invoice</div>
+          <div class="upload-sub">Supports JPG, PNG, PDF — Claude will scan and extract details automatically</div>
+          <input type="file" id="fileInput" accept="image/*,.pdf" style="display:none" onchange="handleFile(event)">
+        </div>
+        <div class="scanning-state" id="scanningState">
+          <div class="spinner"></div>
+          <span style="font-size:13px; color: var(--color-text-secondary);">Claude is reading your receipt...</span>
+        </div>
+        <div class="scan-result" id="scanResult">
+          <div style="font-size:12px; color:#0F6E56; font-weight:500; padding:8px 12px; background:#E1F5EE; border-radius:var(--border-radius-md);">Receipt scanned — please review and confirm</div>
+          <div class="field-grid">
+            <div class="field"><label>Vendor / Payee</label><input type="text" id="f-vendor" placeholder="e.g. Pos Malaysia"></div>
+            <div class="field"><label>Date</label><input type="date" id="f-date"></div>
+            <div class="field"><label>Amount (RM)</label><input type="number" id="f-amount" placeholder="0.00" step="0.01"></div>
+            <div class="field"><label>Category</label>
+              <select id="f-cat">
+                <option value="Marketing">Marketing</option>
+                <option value="Travel">Travel</option>
+                <option value="Utilities">Utilities</option>
+                <option value="Professional Fees">Professional Fees</option>
+                <option value="Office Supplies">Office Supplies</option>
+                <option value="Maintenance">Maintenance</option>
+                <option value="Others">Others</option>
+              </select>
+            </div>
+          </div>
+          <div class="field"><label>Description</label><input type="text" id="f-desc" placeholder="Optional note"></div>
+          <div style="display:flex; gap:10px;">
+            <button class="btn-primary" onclick="confirmExpense()">Confirm & Save</button>
+            <button class="btn-secondary" onclick="resetScan()">Cancel</button>
+          </div>
+          <div class="success-msg" id="successMsg">Expense saved successfully!</div>
+        </div>
+        <div style="margin-top:16px; border-top:0.5px solid var(--color-border-tertiary); padding-top:16px;">
+          <div style="font-size:12px; font-weight:500; margin-bottom:10px; color:var(--color-text-secondary);">Or add manually</div>
+          <div class="field-grid">
+            <div class="field"><label>Vendor / Payee</label><input type="text" id="m-vendor" placeholder="e.g. TNB"></div>
+            <div class="field"><label>Date</label><input type="date" id="m-date"></div>
+            <div class="field"><label>Amount (RM)</label><input type="number" id="m-amount" placeholder="0.00" step="0.01"></div>
+            <div class="field"><label>Category</label>
+              <select id="m-cat">
+                <option value="Marketing">Marketing</option>
+                <option value="Travel">Travel</option>
+                <option value="Utilities">Utilities</option>
+                <option value="Professional Fees">Professional Fees</option>
+                <option value="Office Supplies">Office Supplies</option>
+                <option value="Maintenance">Maintenance</option>
+                <option value="Others">Others</option>
+              </select>
+            </div>
+          </div>
+          <div class="field" style="margin-top:10px;"><label>Description</label><input type="text" id="m-desc" placeholder="Optional note"></div>
+          <button class="btn-primary" style="margin-top:12px;" onclick="addManual()">Add Expense</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- LIST TAB -->
+    <div class="page" id="tab-list">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">All expenses</span>
+          <button class="btn-secondary" style="font-size:12px;padding:6px 12px;" onclick="exportCSV()">Export CSV</button>
+        </div>
+        <table class="expenses-table">
+          <thead><tr><th>Date</th><th>Vendor</th><th>Category</th><th>Description</th><th style="text-align:right">Amount</th></tr></thead>
+          <tbody id="expensesTbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const CAT_COLORS = {
+  'Marketing': '#378ADD',
+  'Travel': '#EF9F27',
+  'Utilities': '#639922',
+  'Professional Fees': '#7F77DD',
+  'Office Supplies': '#D4537E',
+  'Maintenance': '#D85A30',
+  'Others': '#888780'
+};
+const CAT_BADGE = {
+  'Marketing': 'badge-marketing',
+  'Travel': 'badge-travel',
+  'Utilities': 'badge-utilities',
+  'Professional Fees': 'badge-professional',
+  'Office Supplies': 'badge-office',
+  'Maintenance': 'badge-maintenance',
+  'Others': ''
+};
+const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+let expenses = [
+  {id:1,date:'2026-01-15',vendor:'Google Ads',category:'Marketing',desc:'Q1 digital campaign',amount:3200},
+  {id:2,date:'2026-01-20',vendor:'TNB',category:'Utilities',desc:'Office electricity',amount:480},
+  {id:3,date:'2026-02-03',vendor:'MAS Airlines',category:'Travel',desc:'Penang site visit',amount:890},
+  {id:4,date:'2026-02-14',vendor:'Rahmat & Co',category:'Professional Fees',desc:'Legal retainer',amount:4500},
+  {id:5,date:'2026-03-01',vendor:'Pos Malaysia',category:'Office Supplies',desc:'Stationery & postage',amount:210},
+  {id:6,date:'2026-03-10',vendor:'Jaya Grocer',category:'Office Supplies',desc:'Pantry supplies',amount:340},
+  {id:7,date:'2026-03-22',vendor:'Amanah Raya',category:'Professional Fees',desc:'Valuation report',amount:2800},
+];
+let nextId = 8;
+
+let barChart, doughnutChart;
+
+function getFiltered() {
+  const yr = parseInt(document.getElementById('yearFilter').value);
+  const mo = document.getElementById('monthFilter').value;
+  return expenses.filter(e => {
+    const d = new Date(e.date);
+    if (d.getFullYear() !== yr) return false;
+    if (mo !== 'all' && (d.getMonth()+1) !== parseInt(mo)) return false;
+    return true;
+  });
+}
+
+function formatRM(n) { return 'RM ' + Number(n).toLocaleString('en-MY', {minimumFractionDigits:2,maximumFractionDigits:2}); }
+
+function renderMetrics(data) {
+  const total = data.reduce((s,e)=>s+e.amount,0);
+  const cats = [...new Set(data.map(e=>e.category))].length;
+  const yr = parseInt(document.getElementById('yearFilter').value);
+  const allYr = expenses.filter(e=>new Date(e.date).getFullYear()===yr);
+  const yearTotal = allYr.reduce((s,e)=>s+e.amount,0);
+  const topCat = Object.entries(data.reduce((a,e)=>{a[e.category]=(a[e.category]||0)+e.amount;return a},{})).sort((a,b)=>b[1]-a[1])[0];
+  document.getElementById('metrics-row').innerHTML = `
+    <div class="metric"><div class="metric-label">Total expenses</div><div class="metric-value green">${formatRM(total)}</div><div class="metric-sub">${data.length} transaction(s)</div></div>
+    <div class="metric"><div class="metric-label">Year total</div><div class="metric-value">${formatRM(yearTotal)}</div><div class="metric-sub">${yr}</div></div>
+    <div class="metric"><div class="metric-label">Top category</div><div class="metric-value amber" style="font-size:16px;">${topCat?topCat[0]:'-'}</div><div class="metric-sub">${topCat?formatRM(topCat[1]):''}</div></div>
+    <div class="metric"><div class="metric-label">Categories used</div><div class="metric-value">${cats}</div><div class="metric-sub">of 7 total</div></div>
+  `;
+}
+
+function renderBar(data) {
+  const yr = parseInt(document.getElementById('yearFilter').value);
+  const byMonth = Array(12).fill(0);
+  expenses.filter(e=>new Date(e.date).getFullYear()===yr).forEach(e=>{byMonth[new Date(e.date).getMonth()]+=e.amount;});
+  if (barChart) barChart.destroy();
+  barChart = new Chart(document.getElementById('barChart'), {
+    type: 'bar',
+    data: { labels: MONTHS, datasets: [{ label: 'Total (RM)', data: byMonth, backgroundColor: '#1D9E7588', borderColor: '#0F6E56', borderWidth: 1, borderRadius: 4 }] },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { ticks: { callback: v => 'RM'+Math.round(v/1000)+'k', font:{size:11} }, grid: { color: 'rgba(128,128,128,0.1)' } }, x: { ticks: { font:{size:11} }, grid: { display:false } } } }
+  });
+}
+
+function renderDoughnut(data) {
+  const byCat = {};
+  data.forEach(e=>{ byCat[e.category]=(byCat[e.category]||0)+e.amount; });
+  const labels = Object.keys(byCat);
+  const vals = Object.values(byCat);
+  const colors = labels.map(l=>CAT_COLORS[l]||'#888');
+  if (doughnutChart) doughnutChart.destroy();
+  doughnutChart = new Chart(document.getElementById('doughnutChart'), {
+    type: 'doughnut',
+    data: { labels, datasets: [{ data: vals, backgroundColor: colors, borderWidth: 1, borderColor: 'rgba(128,128,128,0.15)' }] },
+    options: { responsive: true, maintainAspectRatio: false, cutout: '65%', plugins: { legend: { display: false } } }
+  });
+  const total = vals.reduce((a,b)=>a+b,0);
+  document.getElementById('doughnut-legend').innerHTML = labels.map((l,i)=>`
+    <span class="legend-item"><span class="legend-dot" style="background:${colors[i]}"></span>${l} ${total?Math.round(vals[i]/total*100):0}%</span>
+  `).join('');
+}
+
+function renderTable(data) {
+  const sorted = [...data].sort((a,b)=>b.date.localeCompare(a.date));
+  document.getElementById('expensesTbody').innerHTML = sorted.map(e=>`
+    <tr>
+      <td style="color:var(--color-text-secondary);white-space:nowrap">${e.date}</td>
+      <td style="font-weight:500">${e.vendor}</td>
+      <td><span class="cat-badge ${CAT_BADGE[e.category]||''}">${e.category}</span></td>
+      <td style="color:var(--color-text-secondary)">${e.desc||'-'}</td>
+      <td class="amount-col" style="text-align:right;white-space:nowrap">${formatRM(e.amount)}</td>
+    </tr>
+  `).join('') || '<tr><td colspan="5" style="text-align:center;color:var(--color-text-secondary);padding:24px">No expenses found</td></tr>';
+}
+
+function renderAll() {
+  const data = getFiltered();
+  renderMetrics(data);
+  renderBar(data);
+  renderDoughnut(data);
+  renderTable(data);
+}
+
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach((t,i)=>{ const names=['dashboard','scan','list']; t.classList.toggle('active', names[i]===name); });
+  document.querySelectorAll('.page').forEach(p=>{ p.classList.toggle('active', p.id==='tab-'+name); });
+  if (name==='dashboard'||name==='list') renderAll();
+}
+
+document.getElementById('yearFilter').onchange = renderAll;
+document.getElementById('monthFilter').onchange = renderAll;
+
+async function handleFile(evt) {
+  const file = evt.target.files[0]; if (!file) return;
+  document.getElementById('uploadZone').style.display='none';
+  document.getElementById('scanningState').classList.add('visible');
+  document.getElementById('scanResult').classList.remove('visible');
+  try {
+    const base64 = await toBase64(file);
+    const isImg = file.type.startsWith('image/');
+    const mediaType = isImg ? file.type : 'application/pdf';
+    const contentType = isImg ? 'image' : 'document';
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1000,
+        system:`You are a receipt/invoice scanner for Far Capital, a Malaysian property investment firm. Extract key fields from the uploaded document. Respond ONLY with valid JSON and nothing else. No markdown, no backticks. Format: {"vendor":"...","date":"YYYY-MM-DD","amount":0.00,"category":"...","description":"..."} Categories must be one of: Marketing, Travel, Utilities, Professional Fees, Office Supplies, Maintenance, Others. Amount in RM (numbers only, no currency symbol). If date unclear, use today's date 2026-03-31.`,
+        messages:[{role:'user',content:[
+          {type:contentType,source:{type:'base64',media_type:mediaType,data:base64}},
+          {type:'text',text:'Extract expense details from this receipt/invoice.'}
+        ]}]
+      })
+    });
+    const data = await resp.json();
+    const text = data.content.map(i=>i.text||'').join('');
+    const parsed = JSON.parse(text.replace(/```json|```/g,'').trim());
+    document.getElementById('f-vendor').value = parsed.vendor||'';
+    document.getElementById('f-date').value = parsed.date||'2026-03-31';
+    document.getElementById('f-amount').value = parsed.amount||'';
+    document.getElementById('f-cat').value = parsed.category||'Others';
+    document.getElementById('f-desc').value = parsed.description||'';
+    document.getElementById('scanningState').classList.remove('visible');
+    document.getElementById('scanResult').classList.add('visible');
+  } catch(e) {
+    alert('Could not read receipt. Please fill in manually.');
+    document.getElementById('scanningState').classList.remove('visible');
+    document.getElementById('uploadZone').style.display='';
+  }
+}
+
+function toBase64(file) {
+  return new Promise((res,rej)=>{ const r=new FileReader(); r.onload=()=>res(r.result.split(',')[1]); r.onerror=()=>rej(new Error('read fail')); r.readAsDataURL(file); });
+}
+
+function confirmExpense() {
+  const v=document.getElementById('f-vendor').value;
+  const d=document.getElementById('f-date').value;
+  const a=parseFloat(document.getElementById('f-amount').value);
+  const c=document.getElementById('f-cat').value;
+  if (!v||!d||!a) { alert('Please fill in vendor, date and amount.'); return; }
+  expenses.push({id:nextId++,date:d,vendor:v,category:c,desc:document.getElementById('f-desc').value,amount:a});
+  document.getElementById('successMsg').classList.add('visible');
+  setTimeout(()=>{ resetScan(); renderAll(); },1500);
+}
+
+function addManual() {
+  const v=document.getElementById('m-vendor').value;
+  const d=document.getElementById('m-date').value;
+  const a=parseFloat(document.getElementById('m-amount').value);
+  const c=document.getElementById('m-cat').value;
+  if (!v||!d||!a) { alert('Please fill in vendor, date and amount.'); return; }
+  expenses.push({id:nextId++,date:d,vendor:v,category:c,desc:document.getElementById('m-desc').value,amount:a});
+  document.getElementById('m-vendor').value='';document.getElementById('m-date').value='';
+  document.getElementById('m-amount').value='';document.getElementById('m-desc').value='';
+  switchTab('dashboard');
+}
+
+function resetScan() {
+  document.getElementById('uploadZone').style.display='';
+  document.getElementById('scanResult').classList.remove('visible');
+  document.getElementById('scanningState').classList.remove('visible');
+  document.getElementById('successMsg').classList.remove('visible');
+  document.getElementById('fileInput').value='';
+}
+
+function exportCSV() {
+  const data = getFiltered();
+  const rows = [['Date','Vendor','Category','Description','Amount (RM)'],...data.map(e=>[e.date,e.vendor,e.category,e.desc||'',e.amount])];
+  const csv = rows.map(r=>r.join(',')).join('\n');
+  const a=document.createElement('a'); a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv); a.download='far_capital_expenses.csv'; a.click();
+}
+
+renderAll();
+</script>
+</body>
+</html>

@@ -159,12 +159,10 @@ body {
 
 /* BADGES */
 .badge { font-size: 11px; padding: 3px 9px; border-radius: 5px; font-weight: 500; white-space: nowrap; }
-.badge-Marketing { background: var(--blue-light); color: var(--blue); }
-.badge-Travel { background: var(--amber-light); color: var(--amber); }
-.badge-Utilities { background: #EAF3DE; color: #3B6D11; }
-.badge-Professional\ Fees { background: var(--purple-light); color: var(--purple); }
-.badge-Office\ Supplies { background: var(--pink-light); color: var(--pink); }
-.badge-Maintenance { background: var(--coral-light); color: var(--coral); }
+.badge-Fleet\ Management { background: var(--blue-light); color: var(--blue); }
+.badge-Office\ Equipment { background: var(--amber-light); color: var(--amber); }
+.badge-Administration { background: #EAF3DE; color: #3B6D11; }
+.badge-IT\ Asset { background: var(--purple-light); color: var(--purple); }
 .badge-Others { background: var(--gray-light); color: var(--gray); }
 
 /* UPLOAD AREA */
@@ -348,9 +346,8 @@ body {
           <div class="field"><label>Amount (RM)</label><input type="number" id="f-amount" step="0.01"></div>
           <div class="field"><label>Category</label>
             <select id="f-cat">
-              <option>Marketing</option><option>Travel</option><option>Utilities</option>
-              <option>Professional Fees</option><option>Office Supplies</option>
-              <option>Maintenance</option><option>Others</option>
+              <option>Fleet Management</option><option>Office Equipment</option><option>Administration</option>
+              <option>IT Asset</option><option>Others</option>
             </select>
           </div>
         </div>
@@ -371,9 +368,8 @@ body {
         <div class="field"><label>Amount (RM)</label><input type="number" id="m-amount" step="0.01" placeholder="0.00"></div>
         <div class="field"><label>Category</label>
           <select id="m-cat">
-            <option>Marketing</option><option>Travel</option><option>Utilities</option>
-            <option>Professional Fees</option><option>Office Supplies</option>
-            <option>Maintenance</option><option>Others</option>
+            <option>Fleet Management</option><option>Office Equipment</option><option>Administration</option>
+            <option>IT Asset</option><option>Others</option>
           </select>
         </div>
       </div>
@@ -415,9 +411,8 @@ body {
       <div class="field"><label>Amount (RM)</label><input type="number" id="e-amount" step="0.01"></div>
       <div class="field"><label>Category</label>
         <select id="e-cat">
-          <option>Marketing</option><option>Travel</option><option>Utilities</option>
-          <option>Professional Fees</option><option>Office Supplies</option>
-          <option>Maintenance</option><option>Others</option>
+          <option>Fleet Management</option><option>Office Equipment</option><option>Administration</option>
+          <option>IT Asset</option><option>Others</option>
         </select>
       </div>
     </div>
@@ -432,9 +427,8 @@ body {
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
 const CAT_COLORS = {
-  'Marketing':'#378ADD','Travel':'#EF9F27','Utilities':'#639922',
-  'Professional Fees':'#7F77DD','Office Supplies':'#D4537E',
-  'Maintenance':'#D85A30','Others':'#888780'
+  'Fleet Management':'#378ADD','Office Equipment':'#EF9F27','Administration':'#639922',
+  'IT Asset':'#7F77DD','Others':'#888780'
 };
 const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
@@ -473,7 +467,7 @@ function renderMetrics(data) {
     <div class="metric"><div class="metric-label">Period total</div><div class="metric-value green">${formatRM(total)}</div><div class="metric-sub">${data.length} transaction(s)</div></div>
     <div class="metric"><div class="metric-label">Year ${yr} total</div><div class="metric-value">${formatRM(yearTotal)}</div><div class="metric-sub">all categories</div></div>
     <div class="metric"><div class="metric-label">Top category</div><div class="metric-value amber">${topCat?topCat[0]:'-'}</div><div class="metric-sub">${topCat?formatRM(topCat[1]):''}</div></div>
-    <div class="metric"><div class="metric-label">Categories used</div><div class="metric-value">${cats}</div><div class="metric-sub">of 7 total</div></div>
+    <div class="metric"><div class="metric-label">Categories used</div><div class="metric-value">${cats}</div><div class="metric-sub">of 5 total</div></div>
   `;
 }
 
